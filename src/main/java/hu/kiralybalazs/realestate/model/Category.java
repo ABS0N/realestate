@@ -16,6 +16,23 @@ public class Category {
     public Category(String name) {
         this.name = name;
     }
-    
+
     // ... getterek és setterek ...
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
 }
