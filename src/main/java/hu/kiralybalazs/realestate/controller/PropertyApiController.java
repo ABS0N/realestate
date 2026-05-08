@@ -20,7 +20,7 @@ public class PropertyApiController {
     }
 
     @PostMapping
-    public Property createProperty(@RequestBody Property property) {
+    public Property createProperty(@Valid @RequestBody Property property) {
         return propertyService.save(property);
     }
 
