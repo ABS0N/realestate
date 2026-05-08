@@ -39,5 +39,5 @@ jobs:
             git reset --hard origin/main
             
             # Docker Compose bűvészet: újraépíti az appot, de az adatbázist békén hagyja
-            docker-compose down
+            docker-compose down --remove-orphans
             docker-compose up -d --build
