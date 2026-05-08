@@ -26,4 +26,8 @@ public class PropertyService {
     public Optional<Property> findById(Long id) {
         return propertyRepository.findById(id);
     }
+
+    public void  deleteById(Long id) {
+        propertyRepository.deleteById(id);
+    }
 }

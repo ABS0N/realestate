@@ -30,4 +30,15 @@ public class PropertyApiController {
     public Property getPropertyById(@PathVariable Long id) {
         return propertyService.findById(id).orElse(null);
     }
+
+    @PutMapping("/{id}")
+    public Property updateProperty(@PathVariable Long id, @Valid @RequestBody Property property) {
+        property.setId(id);
+        return propertyService.save(property);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProperty(@PathVariable Long id) {
+        propertyService.deleteById(id);
+    }
 }

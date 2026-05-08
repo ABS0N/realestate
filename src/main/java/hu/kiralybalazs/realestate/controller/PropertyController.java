@@ -36,4 +36,10 @@ public class PropertyController {
         propertyService.save(property);
         return "redirect:/properties";
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteProperty(@PathVariable Long id) {
+        propertyService.deleteById(id);
+        return "redirect:/properties";
+    }
 }
