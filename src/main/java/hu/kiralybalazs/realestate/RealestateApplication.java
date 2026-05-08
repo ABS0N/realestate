@@ -17,17 +17,26 @@ public class RealestateApplication {
     }
 
     @Bean
-    public CommandLineRunner initData(CategoryRepository categoryRepo, PropertyRepository propertyRepo) {
+    CommandLineRunner init(PropertyRepository propertyRepository, CategoryRepository categoryRepository) {
         return args -> {
-            // Kategóriák létrehozása
-            Category haz = categoryRepo.save(new Category("Családi ház"));
-            Category lakas = categoryRepo.save(new Category("Panellakás"));
+            // ELLENŐRZÉS: Csak akkor töltünk, ha még nincs egyetlen ingatlan sem
+            if (propertyRepository.count() == 0) {
 
-            // Ingatlanok létrehozása és mentése
-            propertyRepo.save(new Property("Budapest, Fő utca 1.", 45000000, 85, haz));
-            propertyRepo.save(new Property("Debrecen, Pláza mellett 4.", 28000000, 52, lakas));
+                Category c1 = new Category();
+                c1.setName("Családi ház");
+                categoryRepository.save(c1);
 
-            System.out.println("--- Mintaadatok betöltve! ---");
+                Category c2 = new Category();
+                c2.setName("Panellakás");
+                categoryRepository.save(c2);
+
+                propertyRepository.save(new Property("Budapest, Fő utca 1.", 45000000, 85, c1));
+                propertyRepository.save(new Property("Debrecen, Pláza mellett 4.", 28000000, 52, c2));
+
+                System.out.println("Adatbázis inicializálva kezdőadatokkal.");
+            } else {
+                System.out.println("Az adatbázis már tartalmaz adatokat, az inicializálás átugorva.");
+            }
         };
     }
 }
