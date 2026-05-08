@@ -1,71 +1,54 @@
 package hu.kiralybalazs.realestate.service;
 
+import hu.kiralybalazs.realestate.model.Category;
 import hu.kiralybalazs.realestate.model.Property;
-import hu.kiralybalazs.realestate.repository.PropertyRepository;
+import hu.kiralybalazs.realestate.repository.CategoryRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class PropertyServiceTest {
+@SpringBootTest
+@Transactional // Varázsszó: A teszt végén mindent visszavon (Rollback), így nem szemeteli tele az adatbázist!
+class PropertyServiceTest {
 
-    @Mock
-    private PropertyRepository propertyRepository;
-
-    @InjectMocks
+    @Autowired
     private PropertyService propertyService;
 
-    @Test
-    public void testFindAll() {
-        // Given
-        Property p1 = new Property();
-        Property p2 = new Property();
-        when(propertyRepository.findAll()).thenReturn(Arrays.asList(p1, p2));
-
-        // When
-        List<Property> result = propertyService.findAll();
-
-        // Then
-        assertEquals(2, result.size());
-        verify(propertyRepository, times(1)).findAll();
-    }
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Test
-    public void testSaveProperty() {
-        // Given
+    void testFullCrudLifecycle() {
+        // 1. CREATE (Létrehozás)
+        Category category = new Category();
+        category.setName("Teszt Kategória");
+        categoryRepository.save(category);
+
         Property property = new Property();
-        property.setAddress("Budapest, Petőfi utca 5.");
-        when(propertyRepository.save(any(Property.class))).thenReturn(property);
+        property.setAddress("Teszt utca 1.");
+        property.setPrice(10000000);
+        property.setArea(50);
+        property.setCategory(category);
 
-        // When
-        Property saved = propertyService.save(property);
+        Property savedProperty = propertyService.save(property);
+        assertNotNull(savedProperty.getId(), "A mentett ingatlannak ID-t kell kapnia");
 
-        // Then
-        assertNotNull(saved);
-        assertEquals("Budapest, Petőfi utca 5.", saved.getAddress());
-    }
+        // 2. READ (Olvasás)
+        Property foundProperty = propertyService.findById(savedProperty.getId()).orElse(null);
+        assertNotNull(foundProperty, "Az ingatlant meg kell találni az adatbázisban");
+        assertEquals("Teszt utca 1.", foundProperty.getAddress());
 
-    @Test
-    public void testFindById() {
-        // Given
-        Property property = new Property();
-        property.setId(1L);
-        when(propertyRepository.findById(1L)).thenReturn(Optional.of(property));
+        // 3. UPDATE (Módosítás)
+        foundProperty.setPrice(12000000);
+        propertyService.save(foundProperty);
+        Property updatedProperty = propertyService.findById(savedProperty.getId()).get();
+        assertEquals(12000000, updatedProperty.getPrice(), "Az árnak frissülnie kellett");
 
-        // When
-        Optional<Property> found = propertyService.findById(1L);
-
-        // Then
-        assertTrue(found.isPresent());
-        assertEquals(1L, found.get().getId());
+        // 4. DELETE (Törlés)
+        propertyService.deleteById(savedProperty.getId());
+        assertTrue(propertyService.findById(savedProperty.getId()).isEmpty(), "Törlés után nem szabad megtalálni");
     }
 }
