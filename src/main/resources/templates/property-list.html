@@ -27,6 +27,7 @@
         <td th:text="${prop.price}">0</td>
         <td th:text="${prop.category != null ? prop.category.name : 'Nincs'}">Kategória</td>
         <td>
+            <a th:href="@{/properties/edit/{id}(id=${prop.id})}" class="btn btn-sm btn-warning">Szerkesztés</a>
             <a th:href="@{/properties/delete/{id}(id=${prop.id})}" class="btn btn-sm btn-danger" onclick="return confirm('Biztosan törölni szeretnéd ezt az ingatlant?')">Törlés</a>
         </td>
     </tr>
