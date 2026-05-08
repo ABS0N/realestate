@@ -1,15 +1,20 @@
 package hu.kiralybalazs.realestate.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
+@ToString(exclude = "properties")
 public class Category {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
