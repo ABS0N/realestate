@@ -42,7 +42,7 @@ public class PropertyController {
         Property property = propertyService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Nincs ilyen ingatlan: " + id));
         model.addAttribute("property", property);
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryRepository.findAll());
         return "property-form";
     }
 
