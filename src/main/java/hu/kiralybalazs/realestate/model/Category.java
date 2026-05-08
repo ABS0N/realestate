@@ -1,13 +1,21 @@
 package hu.kiralybalazs.realestate.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.Data;
+
 import java.util.List;
 
 @Entity
+@Data
 public class Category {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
+    private List<Property> properties;
 
     // Ez az ÜRES konstruktor KELL a JPA-nak
     public Category() {}

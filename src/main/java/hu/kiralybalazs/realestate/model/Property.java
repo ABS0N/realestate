@@ -3,8 +3,8 @@ package hu.kiralybalazs.realestate.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Data
@@ -28,6 +28,7 @@ public class Property {
     private Integer area;
 
     @ManyToOne
+    @JsonManagedReference
     private Category category;
 
     public Property() {
