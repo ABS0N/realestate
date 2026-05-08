@@ -33,9 +33,8 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails admin = User.withDefaultSerializer()
-                .username("admin")
-                .password("Abson2026!")
+        UserDetails admin = User.withUsername("admin")
+                .password("{noop}Abson2026!")
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(admin);
