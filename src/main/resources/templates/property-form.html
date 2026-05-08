@@ -31,12 +31,13 @@
 
     <div class="mb-3">
         <label class="form-label">Kategória:</label>
-        <!-- Biztonságos select binding -->
-        <select th:field="*{category}" class="form-select" required>
+        <select name="category" class="form-select" required>
             <option value="">-- Válassz kategóriát --</option>
             <option th:each="cat : ${categories}"
                     th:value="${cat.id}"
-                    th:text="${cat.name}"></option>
+                    th:text="${cat.name}"
+                    th:selected="${property.category != null and property.category.id == cat.id}">
+            </option>
         </select>
     </div>
 

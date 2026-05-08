@@ -39,8 +39,12 @@ public class PropertyController {
 
     @GetMapping("/edit/{id}")
     public String editProperty(@PathVariable Long id, Model model) {
-        Property property = propertyService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Nincs ilyen ingatlan: " + id));
+        Property property = propertyService.findById(id).orElse(null);
+
+        if (property == null) {
+            return "redirect:/properties";
+        }
+
         model.addAttribute("property", property);
         model.addAttribute("categories", categoryRepository.findAll());
         return "property-form";

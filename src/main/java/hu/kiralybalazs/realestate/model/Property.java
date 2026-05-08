@@ -1,14 +1,14 @@
 package hu.kiralybalazs.realestate.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.AllArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
-@Data
-@AllArgsConstructor // Generál egy olyan konstruktort, amiben minden benne van
+@Getter
+@Setter
+@AllArgsConstructor
 public class Property {
 
     @Id
