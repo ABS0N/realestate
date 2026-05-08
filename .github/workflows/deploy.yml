@@ -28,22 +28,39 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # 1. Telepítjük a Git-et és a Docker-t, ha véletlen nem lenne fent
-            sudo apt-get update
-            sudo apt-get install -y git docker.io docker-compose
+            # 1. Rendszer frissítések és Docker ellenőrzése (csendes mód)
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -y
+            apt-get install -y git docker.io
             
-            # 2. Letöltjük/Frissítjük a forráskódot a szerveren
-            cd /app || git clone https://github.com/ABS0N/realestate.git /app
+            # 2. Projekt mappa tisztítása és letöltése
+            # Ha létezik a mappa, de NEM git repó, akkor töröljük a fenébe
+            if [ -d "/app" ] && [ ! -d "/app/.git" ]; then
+              echo "Hibás mappa észlelve, törlés..."
+              rm -rf /app
+            fi
+            
+            # Ha még nincs ott a kód, leklónozzuk
+            if [ ! -d "/app" ]; then
+              echo "Projekt klónozása..."
+              git clone https://github.com/ABS0N/realestate.git /app
+            fi
+            
+            # Belépünk és frissítünk a legfrissebb állapotra
             cd /app
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
             
-            # 3. Docker konténer újraindítása (Build és Run)
-            # Megállítjuk a régit, ha futna
-            sudo docker stop realestate-app || true
-            sudo docker rm realestate-app || true
+            # 3. Docker műveletek
+            echo "Docker build indítása..."
+            # Megállítjuk és töröljük a régi konténert, ha van
+            docker stop realestate-app || true
+            docker rm realestate-app || true
             
-            # Felépítjük az új image-et a Dockerfile alapján
-            sudo docker build -t realestate-app .
+            # Felépítjük az új image-et (fontos a pont a végén!)
+            docker build -t realestate-app .
             
-            # Elindítjuk az újat a 80-as porton (hogy ne kelljen :8080-at írni)
-            sudo docker run -d --name realestate-app -p 80:8080 realestate-app
+            # Elindítjuk az alkalmazást a 80-as porton
+            docker run -d --name realestate-app -p 80:8080 realestate-app
+            
+            echo "Sikeres élesítés!"
