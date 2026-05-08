@@ -28,12 +28,22 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Belépünk a szerver mappájába
-            cd /app || mkdir /app && cd /app
+            # 1. Telepítjük a Git-et és a Docker-t, ha véletlen nem lenne fent
+            sudo apt-get update
+            sudo apt-get install -y git docker.io docker-compose
             
-            # (Opcionális: Ha még nincs ott a kód, leklónozzuk, vagy csak másoljuk a JAR-t)
-            # A legegyszerűbb módszer vizsgára: Docker image build helyben a szerveren
-            # Ehhez a GitHub Action-nek át kellene másolnia a fájlokat, de maradjunk a leggyorsabbnál:
+            # 2. Letöltjük/Frissítjük a forráskódot a szerveren
+            cd /app || git clone https://github.com/ABS0N/realestate.git /app
+            cd /app
+            git pull origin main
             
-            echo "A szerver frissítése indul..."
-            # Itt a szerveren lévő Docker parancsokat futtatjuk távolról
+            # 3. Docker konténer újraindítása (Build és Run)
+            # Megállítjuk a régit, ha futna
+            sudo docker stop realestate-app || true
+            sudo docker rm realestate-app || true
+            
+            # Felépítjük az új image-et a Dockerfile alapján
+            sudo docker build -t realestate-app .
+            
+            # Elindítjuk az újat a 80-as porton (hogy ne kelljen :8080-at írni)
+            sudo docker run -d --name realestate-app -p 80:8080 realestate-app
