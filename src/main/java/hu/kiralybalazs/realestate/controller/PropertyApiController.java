@@ -5,6 +5,8 @@ import hu.kiralybalazs.realestate.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController // <-- Ez a kulcs a Swaggerhez!

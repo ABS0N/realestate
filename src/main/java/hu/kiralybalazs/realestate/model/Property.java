@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @Data
-@NoArgsConstructor // Lombok generálja a háttérben
 @AllArgsConstructor // Generál egy olyan konstruktort, amiben minden benne van
 public class Property {
 
